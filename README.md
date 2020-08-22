@@ -1,2 +1,2 @@
 # dev_terraform
-git praticse
+terraform exercise
