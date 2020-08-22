@@ -1,0 +1,28 @@
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_key_pair" "example" {
+  key_name   = "aws_terraform"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC50ULkbm0ZVDKuTrbGX1ndOgs49WqeuLYsbTPlG265vmrmAiZaIk2fpNg+tsIQHqIvgJwn6arsBYuajRDVZnRQN4Gn+wTf3DTsaAfwnUvIECxGu4j5Flpr2VACQIzMK22Cav6I/jVhEeKVjQVUxCirZBEldkwYosDI4ieuKt6Q0UJmbQwjz5oInmv4/l+2RKR/V6koBhc7mOEaKE3lxmB6eX8fazA1VPIEji7WZC7XG1fp1muVShXk0zlJcIUcCPkLf2ndFpeVtwao3R4mQYybCVM/xaxqUa/Dgmw29YtfeHSNjGc3yE1INM+9t/IQ/fbM6Y2h9EXwLaUXNDtQN9j7Tr6uZS3bMHEdk/eAVX8x6X0DaVCZrGF7PpB4LjzZ3HKU9ddBduoBzlxanC6/k1IhfM9SSZZ34iSm+8uicxwy0HnQjuYVHF8s/lG1nlG1+tSUegeKVSva77lNFOzxegMvutMCUh5Vl9v32+5CySZsims22HVa/utCOoaqn5TDmwU= aws_terraform_ssh_key"
+}
+
+
+resource "aws_security_group" "examplesg" {
+  ingress {
+    from_port   = 22
+    protocol    = "tcp"
+    to_port     = 22
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "ec2_instance" {
+  ami                    = "ami-08d70e59c07c61a3a"
+  instance_type          = "t2.micro"
+  vpc_security_group_ids = ["${aws_security_group.examplesg.id}"]
+  key_name               = aws_key_pair.example.id
+  tags = {
+    Name = "my-first-ec2-instance"
+  }
+}
